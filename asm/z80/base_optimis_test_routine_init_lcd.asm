@@ -1,5 +1,5 @@
 ; base optimisé test routine init lcd
-; Sauvegardé le 22.11.2026 20:02:15
+; Sauvegardé le 22.11.2026 21:04:15
 ; Émulateur Z80 — github.com/Random-pnj/ASM-z80
 
 ; base optimisé avec annotation
@@ -38,14 +38,17 @@ CTRLB_4         EQU     $83
 
 ;--- Modes LCD ----------------------------------------------------------------
 GRAPH_MODE      EQU     $3E                     ; Commande init LCD mode graphique 128x64
-TEXT_MODE       EQU     $0E                     ; Commande init LCD mode texte 2x16
+TEXT_MODE       EQU     $0e                     ; Commande init LCD mode texte 2x16
+CLR_LCD         EQU     $01
+CRS_BLINK       EQU     $0f
+CRS_HOME        EQU     $02
 
 ;--- Signaux contrôle LCD (câblés sur Port B PIO1) ----------------------------
-RS              EQU     %10000001               ; Register Select : 0=commande / 1=donnée
-RW              EQU     %10000100               ; Read/Write      : 0=écriture / 1=lecture
-EP              EQU     %10001010               ; Enable          : front montant valide le bus
-
+RS              EQU     %00000001               ; Register Select : 0=commande / 1=donnée
+RW              EQU     %00000100               ; Read/Write      : 0=écriture / 1=lecture
+EP              EQU     %00000010               ; Enable          : front montant valide le bus
 ;--- Modes PIO ----------------------------------------------------------------
+
 OUTPUT_MODE     EQU     $0F                     ; Mode 0 : 8 bits sortie
 INPUT_MODE      EQU     $4F                     ; Mode 1 : 8 bits entrée
 BIDIRECTIONAL_MODE  EQU     $8F                 ; Mode 2 : bidirectionnel (Port A seulement)
@@ -563,12 +566,8 @@ PRINT_MEM_MESSAGE: DB      "ADRESSE:  $", $00  ; En-tête affichage mémoire
 
 ; Init LCD en mode texte 2x16 caractères
 INISIALISATION_ECRAN_LCD:
-
-
-
-            LD      BC, 100                 ; Attente 100 ms pour stabilisation alimentation LCD
+            LD      BC, 100                 ; Attente 100 ms pour stabilisation alimentation
             CALL    DELAY
-
             LD      A, (DISPLAY_MODE)       ; Charge la commande d'init mode texte ($0E)
             OUT     (PIO1_DATA_LCD), A      ; Envoie la commande sur le bus données
             CALL    ENABLE                  ; 1ère impulsion Enable (LCD nécessite 2 fois)
@@ -720,7 +719,7 @@ LCD_INST:
 ; Efface l'écran LCD, remet CHAR_POS à 0 et vide le CHAR_BUFFER
 CLEAR_SCREEN:
             CALL    BFLAG                   ; Attend que le LCD soit libre
-            LD      A, $01                  ; Commande HD44780 "Clear Display"
+            LD      A, clr_lcd              ; Commande HD44780 "Clear Display"
             OUT     (PIO1_DATA_LCD), A      ; Envoie la commande
             CALL    ENABLE                  ; Impulsion Enable pour exécuter la commande
             LD      BC, 100                 ; Clear Display est lente (~1.5 ms) → attend 100 ms
