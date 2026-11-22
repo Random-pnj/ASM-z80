@@ -1,5 +1,5 @@
 ; base optimisé test routine init lcd
-; Sauvegardé le 22.11.2026 18:08:56
+; Sauvegardé le 22.11.2026 18:10:21
 ; Émulateur Z80 — github.com/Random-pnj/ASM-z80
 
 ; base optimisé avec annotation
