@@ -1,5 +1,5 @@
 ; test _ interupte de isolation bit
-; Sauvegardé le 22.11.2026 18:10:20
+; Sauvegardé le 22.11.2026 20:02:14
 ; Émulateur Z80 — github.com/Random-pnj/ASM-z80
 
 ;--- Modes PIO ----------------------------------------------------------------
